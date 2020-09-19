@@ -19,6 +19,7 @@ basic_spec_array=('!' '@' '#' '$' '%' '&' '_' '-' '=' '+' '(' '[' '{' '}' ']' ')
 chars_array=("${alp_lower_array[@]}" "${alp_upper_array[@]}" "${numbers_array[@]}" "${basic_spec_array[@]}")
 echo "chars_array: "${chars_array[@]}
 chars_qtty=${#chars_array[@]}  ### 92 characters till now...
+echo "chars_qtty: "${#chars_array[@]}
 
 #### initializes useful variables
 #------------------------ initialization ------------------------
@@ -39,45 +40,94 @@ do
   dividend=$counter
   let quotient=dividend/divisor
   let remainder=dividend%divisor
-  echo "* dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
+#  echo "* dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
 #  read -t 0.05
 
-  if [ $quotient -eq 0 ]
-  then 
-    remainders+=($remainder)
-    remainders+=($quotient)
-    echo "if: remainders: "${remainders[@]}
-  else
-    if [ $quotient -gt 0 ] || [ $quotient -lt $divisor ]
-    then
-      remainders+=($quotient)
+###  if [ $quotient -eq 0 ]
+###  then 
+###    remainders+=($remainder)
+###  fi
+  
+###  if [ $quotient -gt 0 ] || [ $quotient -lt $divisor ]
+###  then
+###    remainders+=($remainder)
+###    remainders+=($quotient)
+###  fi
+  
+  echo "counter:"$counter", dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
+  
+  divisible=1
+  while [ $divisible -eq 1 ]
+  ### $dividend -ge $divisor ] 
+  do
+    if [ $quotient -eq 0 ]
+    then 
+      remainders+=($remainder)
+      divisible=0
+      echo while-if1
     else
-      while [ $quotient -ge $divisor ] 
-      do
+      if [ $quotient -gt 0 ] || [ $quotient -lt $divisor ]
+      then
         remainders+=($remainder)
-        dividend=$quotient
-        let quotient=dividend/divisor
-        let remainder=dividend%divisor
-        echo "internal: dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
-#        read -t 0.2 -p ".2 sec.."
-      done
+        remainders+=($quotient)
+        divisible=0
+        echo while-if2
+      fi
     fi
-  fi
+
+    if [ $quotient -gt $divisor ]
+    then
+      remainders+=($remainder)
+      dividend=$quotient
+      echo while-if3
+    fi
+
+    let quotient=dividend/divisor
+    let remainder=dividend%divisor
+
+    echo "divisible: "$divisible" remainders: >>"${remainders[@]}"<<"
+  done
+
+
+    
+
+##    echo "if: quotient:"$quotient" remainders: "${remainders[@]}
+##  else
+###    if [ $quotient -gt 0 ] || [ $quotient -lt $divisor ]
+###    then
+###      remainders+=($quotient)
+###      echo "   if 2: quotient:"$quotient" remainders:"${remainders[@]}
+###    else
+###      while [ $quotient -ge $divisor ] 
+###      do
+###        remainders+=($remainder)
+###        dividend=$quotient
+###        let quotient=dividend/divisor
+###        let remainder=dividend%divisor
+###        echo "      while 2: dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
+####        read -t 0.2 -p ".2 sec.."
+###      done
+###    fi
+#####  fi
 
   generated_password=""
-  if [ ${#remainders[@]} -eq 1 ]
-  then
-    number=${remainders[`expr ${#remainders[@]} - 1`]}
-    generated_password+=${chars_array[$number-1]}
-  else
+#  if [ ${#remainders[@]} -eq 1 ]
+#  then
+#    number=${remainders[`expr ${#remainders[@]} - 1`]}
+#    generated_password+=${chars_array[$number-1]}
+#  else
     for (( i=1; i <= ${#remainders[@]}; i++ ))
     do 
       number=${remainders[`expr ${#remainders[@]} - $i`]}
-      generated_password+=${chars_array[$number-1]}
-      echo "i: "$i" #remainders:"${#remainders[@]}" number:"$number" generating password..."$generated_password
+      generated_password+=${chars_array[$number - 1]}
+#####      echo "loop i:"$i" #remainders:"${#remainders[@]}" number:"$number" generating password... >>"$generated_password"<<"
+#####      read -t 0.1 -p "0.1 sec... "
     done
-  fi
+#  fi
   echo "generated password: >"$generated_password"<"
+#####  read -t .2 -p ".2 sec... "
+  echo
+  echo
 
   ((counter++))
 ####  echo "new counter: "$counter
