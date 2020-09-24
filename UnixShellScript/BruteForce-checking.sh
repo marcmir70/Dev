@@ -41,6 +41,7 @@ do
   let quotient=dividend/divisor  # 93=8556/92
   let remainder=dividend%divisor # 0
 
+  remainders+=($remainder)
 #  echo "* dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
 #  read -t 0.05
 ###  if [ $quotient -eq 0 ]
@@ -54,11 +55,11 @@ do
 ###  fi
   
   echo "counter:"$counter", dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
-###  checked=2
+  checked=2
   
   divisible=1
-  ### while [ $divisible -eq 1 ]
-while [ $dividend -ge $divisor ] 
+  while [ $divisible -eq 1 ]
+  ### $dividend -ge $divisor ] 
   do
     if [ $quotient -eq 0 ]
     then 
@@ -67,31 +68,28 @@ while [ $dividend -ge $divisor ]
       divisible=0
       echo while-if1
     else # troquei o OU "||" por E "&&"
-      if [ $quotient -gt 0 ] && [ $quotient -lt $divisor ]
+      if [ $quotient -gt 0 ] && [ $quotient -le $divisor ]
       then
-###        checked=1
+        ((checked++))
         remainders+=($remainder)
         remainders+=($quotient)
         divisible=0
         echo while-if2
-###      fi
-###    fi
-      else
-###        if [ $quotient -gt $divisor ]
-###        then
-###          checked=1
-###          remainders+=($remainder)
-          dividend=$quotient
-          echo while-else2
-###        fi
       fi
+    fi
+
+    if [ $quotient -gt $divisor ]
+    then
+      checked=1
+      remainders+=($remainder)
+      dividend=$quotient
+      echo while-if3
     fi
     
 ###    if [ $quotient -eq $divisor ]
 ###    then
 ###      ((checked++))
-###      remainders+=(0)
-###      remainders+=(1)
+###      dividend=$quotient
 ###      echo while-if4
 ###    fi
     
@@ -100,11 +98,11 @@ while [ $dividend -ge $divisor ]
     
     echo "quotient: "$quotient" remainder: "$remainder
     echo "divisible: "$divisible" remainders: ( "${remainders[@]}" )"
-###    ((checked++)) 
-###    if [ $checked -ge 4 ]
-###    then
-###        break
-###    fi
+    ((checked++))
+    if [ $checked -ge 4 ]
+    then
+        break
+    fi
 
 # counter:8556, dividend:8556, divisor:92, quotient:93, remainder:0
 # while-if2
