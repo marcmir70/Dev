@@ -1,8 +1,12 @@
 #!/bin/bash
 
-#### Marcelo Miranda 20200917 version 0.x checking version
-#### this is a try of a brute force script to recover pi user password
+#### Marcelo Miranda 20200924 checking version 1.0
+#### this is a try of a brute force script to recover a user password
+#### there were two motivations: 
+#### 1. I lost the password for one user and I thought this to get it back; and
+#### 2. to check the period of time to ṕass over all chars combinations
 
+SECONDS=0
 #------------------------ base of characters arrays ------------------------
 declare -a alp_lower_array
 declare -a alp_upper_array
@@ -29,149 +33,59 @@ echo "chars_qtty: "${#chars_array[@]}
 generated_password=""
 variant_char=""
 check_return=""
-counter=8460  # starts = 0 # em 8464 deu erro >> 100(92)
+counter=0  # starts = 0 # em 8464 deu erro >> 100(92)
 divisor=$chars_qtty
 
-echo "counter: "$counter
+# echo "counter: "$counter
 ## while [ ${return:4:5} != 'Falha' ]
-while [ $counter -lt 8468 ]
+while [ $counter -lt 10000 ] ## 5132188731380000ls 
 do
   remainders=()
-  dividend=$counter              # 8556
-  let quotient=dividend/divisor  # 93=8556/92
-  let remainder=dividend%divisor # 0
-
-#  echo "* dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
-#  read -t 0.05
-###  if [ $quotient -eq 0 ]
-###  then 
-###    remainders+=($remainder)
-###  fi
-###  if [ $quotient -gt 0 ] || [ $quotient -lt $divisor ]
-###  then
-###    remainders+=($remainder)
-###    remainders+=($quotient)
-###  fi
+  dividend=$counter # 8460 ## 8556
   
-  echo "counter:"$counter", dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
-  checked=2
-  
-  divisible=1
-  while [ $divisible -eq 1 ]
-  ### $dividend -ge $divisor ] 
-  do
-    if [ $quotient -eq 0 ]
-    then 
-      checked=1
-      remainders+=($remainder)
-      divisible=0
-      echo while-if1
-    else # troquei o OU "||" por E "&&"
-      if [ $quotient -gt 0 ] && [ $quotient -lt $divisor ]
-      then
-        checked=1
-        remainders+=($remainder)
-        remainders+=($quotient)
-        divisible=0
-        echo while-if2
-      fi
-    fi
-
-    if [ $quotient -gt $divisor ]
-    then
-      checked=1
-      remainders+=($remainder)
-      dividend=$quotient
-      echo while-if3
-    fi
-    
-    if [ $quotient -eq $divisor ]
-    then
-      ((checked++))
-      dividend=$quotient
-      echo while-if4
-    fi
-    
-    let quotient=dividend/divisor
+  if [ $dividend -lt $divisor ]
+  then
     let remainder=dividend%divisor
-    
-    echo "quotient: "$quotient" remainder: "$remainder
+    remainders+=($remainder)
+  fi    
 
-    echo "divisible: "$divisible" remainders: ( "${remainders[@]}" )"
-    ((checked++))
-    
-    if [ $checked -ge 4 ]
+  while [ $dividend -ge $divisor ] # dd=8460 # dd=92 ### $divisible -eq 1 ]
+  do
+    let quotient=dividend/divisor  #  q=91   #  q=1  ## 93=8556/92
+    let remainder=dividend%divisor #  r=88   #  r=0  ## 0
+
+    remainders+=($remainder)  # Rs=( 88 )
+
+##    echo "quotient: "$quotient" remainder: "$remainder" remainders: ( "${remainders[@]}" )"
+ 
+    if [ $quotient -gt 0 ] && [ $quotient -lt $divisor ]
     then
-        break
+      remainders+=($quotient)  # Rs=( 88 91 )
     fi
 
-# counter:8556, dividend:8556, divisor:92, quotient:93, remainder:0
-# while-if2
-# while-if3
-# divisible: 0 remainders: >>0 93 0<< ERRO  =>  seria >>1 0 0<<
-# generated password: >\\<
-# ----------------------------- após trocar || por &&
-# counter:8461, dividend:8461, divisor:92, quotient:91, remainder:89
-# while-if2
-# divisible: 0 remainders: >>89 91<<
-# generated password: >|/<
-
-# counter:8462, dividend:8462, divisor:92, quotient:91, remainder:90
-# while-if2
-# divisible: 0 remainders: >>90 91<<
-# generated password: >|?<
-
-# counter:8463, dividend:8463, divisor:92, quotient:91, remainder:91
-# while-if2
-# divisible: 0 remainders: >>91 91<<
-# generated password: >||<
-
-# counter:8464, dividend:8464, divisor:92, quotient:92, remainder:0
-# divisible: 1 remainders: >><<
-# divisible: 1 remainders: >><<
-# divisible: 1 remainders: >><<
+##    if [ $quotient -ge $divisor ]
+##    then
+    dividend=$quotient
+##    fi
+    
+##    echo "counter: "$counter" dividend: "$dividend" quotient: "$quotient" remainder: "$remainder" remainders: ( "${remainders[@]}" )"
 
   done
 
-##    echo "if: quotient:"$quotient" remainders: "${remainders[@]}
-##  else
-###    if [ $quotient -gt 0 ] || [ $quotient -lt $divisor ]
-###    then
-###      remainders+=($quotient)
-###      echo "   if 2: quotient:"$quotient" remainders:"${remainders[@]}
-###    else
-###      while [ $quotient -ge $divisor ] 
-###      do
-###        remainders+=($remainder)
-###        dividend=$quotient
-###        let quotient=dividend/divisor
-###        let remainder=dividend%divisor
-###        echo "      while 2: dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
-####        read -t 0.2 -p ".2 sec.."
-###      done
-###    fi
-#####  fi
-
   generated_password=""
-#  if [ ${#remainders[@]} -eq 1 ]
-#  then
-#    number=${remainders[`expr ${#remainders[@]} - 1`]}
-#    generated_password+=${chars_array[$number-1]}
-#  else
     for (( i=1; i <= ${#remainders[@]}; i++ ))
     do 
       number=${remainders[`expr ${#remainders[@]} - $i`]}
       generated_password+=${chars_array[$number]}
-      echo "loop i:"$i" remainders["`expr $i - 1`"]="${remainders[$i - 1]}" number:"$number" generating password... >> "$generated_password" <<"
-#####      read -t 0.1 -p "0.1 sec... "
+##      echo "loop i:"$i" remainders["`expr $i - 1`"]="${remainders[$i - 1]}" number:"$number" generating password... >> "$generated_password" <<"
+##      read -t 0.1 -p "0.1 sec... "
     done
-#  fi
-  echo "generated password: >"$generated_password"<"
-#####  read -t .2 -p ".2 sec... "
-  echo
-#  echo
+#  echo "counter: "$counter" | generated password: "$generated_password" "
+  echo $generated_password" "
 
   ((counter++))
 ####  echo "new counter: "$counter
 done
-echo "All done"
+duration=$SECONDS
+echo "All done in "$duration" seconds."
+## , or "$(($SECONDS/60))" minutes, or "$(($SECONDS/3600))" hours, or "$(($SECONDS/86400))" days."
