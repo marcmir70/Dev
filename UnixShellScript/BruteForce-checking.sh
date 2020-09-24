@@ -10,13 +10,13 @@ declare -a numbers_array
 declare -a basic_spec_array
 declare -a chars_array
 
+numbers_array=(0 1 2 3 4 5 6 7 8 9)
 alp_lower_array=(a b c d e f g h i j k l m n o p q r s t u v w x y z)
 alp_upper_array=(A B C D E F G H I J K L M N O P Q R S T U V W X Y Z)
-numbers_array=(1 2 3 4 5 6 7 8 9 0)
 #### # ------- Problem: how to include the chars " (double quotes),
 #### # * (asteristic) and ' (single quote, or "plic") in a chars array??
 basic_spec_array=('!' '@' '#' '$' '%' '&' '_' '-' '=' '+' '(' '[' '{' '}' ']' ')' '~' '^' '`' '"' ',' '.' ';' ':' '<' '>' '/' '?' '|' '\')
-chars_array=("${alp_lower_array[@]}" "${alp_upper_array[@]}" "${numbers_array[@]}" "${basic_spec_array[@]}")
+chars_array=("${numbers_array[@]}" "${alp_lower_array[@]}" "${alp_upper_array[@]}" "${basic_spec_array[@]}")
 echo "chars_array: "${chars_array[@]}
 chars_qtty=${#chars_array[@]}  ### 92 characters till now...
 echo "chars_qtty: "${#chars_array[@]}
@@ -29,7 +29,7 @@ echo "chars_qtty: "${#chars_array[@]}
 generated_password=""
 variant_char=""
 check_return=""
-counter=8460  # em 8464 deu erro >> 100(92)
+counter=8460  # starts = 0 # em 8464 deu erro >> 100(92)
 divisor=$chars_qtty
 
 echo "counter: "$counter
@@ -54,37 +54,57 @@ do
 ###  fi
   
   echo "counter:"$counter", dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
+###  checked=2
   
   divisible=1
-  while [ $divisible -eq 1 ]
-  ### $dividend -ge $divisor ] 
+  ### while [ $divisible -eq 1 ]
+while [ $dividend -ge $divisor ] 
   do
     if [ $quotient -eq 0 ]
     then 
+      checked=1
       remainders+=($remainder)
       divisible=0
       echo while-if1
     else # troquei o OU "||" por E "&&"
       if [ $quotient -gt 0 ] && [ $quotient -lt $divisor ]
       then
+###        checked=1
         remainders+=($remainder)
         remainders+=($quotient)
         divisible=0
         echo while-if2
+###      fi
+###    fi
+      else
+###        if [ $quotient -gt $divisor ]
+###        then
+###          checked=1
+###          remainders+=($remainder)
+          dividend=$quotient
+          echo while-else2
+###        fi
       fi
     fi
-
-    if [ $quotient -gt $divisor ]
-    then
-      remainders+=($remainder)
-      dividend=$quotient
-      echo while-if3
-    fi
-
+    
+###    if [ $quotient -eq $divisor ]
+###    then
+###      ((checked++))
+###      remainders+=(0)
+###      remainders+=(1)
+###      echo while-if4
+###    fi
+    
     let quotient=dividend/divisor
     let remainder=dividend%divisor
-
-    echo "divisible: "$divisible" remainders: >>"${remainders[@]}"<<"
+    
+    echo "quotient: "$quotient" remainder: "$remainder
+    echo "divisible: "$divisible" remainders: ( "${remainders[@]}" )"
+###    ((checked++)) 
+###    if [ $checked -ge 4 ]
+###    then
+###        break
+###    fi
 
 # counter:8556, dividend:8556, divisor:92, quotient:93, remainder:0
 # while-if2
@@ -142,15 +162,15 @@ do
     for (( i=1; i <= ${#remainders[@]}; i++ ))
     do 
       number=${remainders[`expr ${#remainders[@]} - $i`]}
-      generated_password+=${chars_array[$number - 1]}
-#####      echo "loop i:"$i" #remainders:"${#remainders[@]}" number:"$number" generating password... >>"$generated_password"<<"
+      generated_password+=${chars_array[$number]}
+      echo "loop i:"$i" remainders["`expr $i - 1`"]="${remainders[$i - 1]}" number:"$number" generating password... >> "$generated_password" <<"
 #####      read -t 0.1 -p "0.1 sec... "
     done
 #  fi
   echo "generated password: >"$generated_password"<"
 #####  read -t .2 -p ".2 sec... "
   echo
-  echo
+#  echo
 
   ((counter++))
 ####  echo "new counter: "$counter
