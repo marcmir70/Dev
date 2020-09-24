@@ -29,26 +29,24 @@ echo "chars_qtty: "${#chars_array[@]}
 generated_password=""
 variant_char=""
 check_return=""
-counter=1
+counter=8460  # em 8464 deu erro >> 100(92)
 divisor=$chars_qtty
 
 echo "counter: "$counter
 ## while [ ${return:4:5} != 'Falha' ]
-while [ $counter -lt 10000000 ]
+while [ $counter -lt 8468 ]
 do
   remainders=()
-  dividend=$counter
-  let quotient=dividend/divisor
-  let remainder=dividend%divisor
+  dividend=$counter              # 8556
+  let quotient=dividend/divisor  # 93=8556/92
+  let remainder=dividend%divisor # 0
 
 #  echo "* dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
 #  read -t 0.05
-
 ###  if [ $quotient -eq 0 ]
 ###  then 
 ###    remainders+=($remainder)
 ###  fi
-  
 ###  if [ $quotient -gt 0 ] || [ $quotient -lt $divisor ]
 ###  then
 ###    remainders+=($remainder)
@@ -66,8 +64,8 @@ do
       remainders+=($remainder)
       divisible=0
       echo while-if1
-    else
-      if [ $quotient -gt 0 ] || [ $quotient -lt $divisor ]
+    else # troquei o OU "||" por E "&&"
+      if [ $quotient -gt 0 ] && [ $quotient -lt $divisor ]
       then
         remainders+=($remainder)
         remainders+=($quotient)
@@ -87,6 +85,33 @@ do
     let remainder=dividend%divisor
 
     echo "divisible: "$divisible" remainders: >>"${remainders[@]}"<<"
+
+# counter:8556, dividend:8556, divisor:92, quotient:93, remainder:0
+# while-if2
+# while-if3
+# divisible: 0 remainders: >>0 93 0<< ERRO  =>  seria >>1 0 0<<
+# generated password: >\\<
+# ----------------------------- após trocar || por &&
+# counter:8461, dividend:8461, divisor:92, quotient:91, remainder:89
+# while-if2
+# divisible: 0 remainders: >>89 91<<
+# generated password: >|/<
+
+# counter:8462, dividend:8462, divisor:92, quotient:91, remainder:90
+# while-if2
+# divisible: 0 remainders: >>90 91<<
+# generated password: >|?<
+
+# counter:8463, dividend:8463, divisor:92, quotient:91, remainder:91
+# while-if2
+# divisible: 0 remainders: >>91 91<<
+# generated password: >||<
+
+# counter:8464, dividend:8464, divisor:92, quotient:92, remainder:0
+# divisible: 1 remainders: >><<
+# divisible: 1 remainders: >><<
+# divisible: 1 remainders: >><<
+
   done
 
 ##    echo "if: quotient:"$quotient" remainders: "${remainders[@]}
