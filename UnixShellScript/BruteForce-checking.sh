@@ -41,7 +41,6 @@ do
   let quotient=dividend/divisor  # 93=8556/92
   let remainder=dividend%divisor # 0
 
-  remainders+=($remainder)
 #  echo "* dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
 #  read -t 0.05
 ###  if [ $quotient -eq 0 ]
@@ -68,9 +67,9 @@ do
       divisible=0
       echo while-if1
     else # troquei o OU "||" por E "&&"
-      if [ $quotient -gt 0 ] && [ $quotient -le $divisor ]
+      if [ $quotient -gt 0 ] && [ $quotient -lt $divisor ]
       then
-        ((checked++))
+        checked=1
         remainders+=($remainder)
         remainders+=($quotient)
         divisible=0
@@ -86,19 +85,21 @@ do
       echo while-if3
     fi
     
-###    if [ $quotient -eq $divisor ]
-###    then
-###      ((checked++))
-###      dividend=$quotient
-###      echo while-if4
-###    fi
+    if [ $quotient -eq $divisor ]
+    then
+      ((checked++))
+      dividend=$quotient
+      echo while-if4
+    fi
     
     let quotient=dividend/divisor
     let remainder=dividend%divisor
     
     echo "quotient: "$quotient" remainder: "$remainder
+
     echo "divisible: "$divisible" remainders: ( "${remainders[@]}" )"
     ((checked++))
+    
     if [ $checked -ge 4 ]
     then
         break
