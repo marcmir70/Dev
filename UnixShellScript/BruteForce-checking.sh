@@ -40,6 +40,7 @@ do
   dividend=$counter
   let quotient=dividend/divisor
   let remainder=dividend%divisor
+
 #  echo "* dividend:"$dividend", divisor:"$divisor", quotient:"$quotient", remainder:"$remainder
 #  read -t 0.05
 
@@ -87,9 +88,6 @@ do
 
     echo "divisible: "$divisible" remainders: >>"${remainders[@]}"<<"
   done
-
-
-    
 
 ##    echo "if: quotient:"$quotient" remainders: "${remainders[@]}
 ##  else
