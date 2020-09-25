@@ -138,11 +138,11 @@ do
 #### test access with generated password
 #### https://stackoverflow.com/questions/233217/how-to-pass-the-password-to-su-sudo-ssh-without-overriding-the-tty
   echo $generated_password | su test_acc
-       # or try: su pi <<< generated_password
+  # or try: su pi <<< generated_password
 
-      # check if the access was succesfull
-       ## return=`echo $?`
-       # https://linuxhint.com/check_command_succeeded_bash/
+  # check if the access was succesfull
+  ## return=`echo $?`
+   # https://linuxhint.com/check_command_succeeded_bash/
   if [ $? -eq 0 ]; then
     echo "screen: OK for: "$generated_password
 #### using '>>' redirects returns to display and files
